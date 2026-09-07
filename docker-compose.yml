@@ -1,0 +1,62 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: perpustakaan_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom.ini
+    networks:
+      - perpustakaan
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - DB_HOST=mysql
+      - DB_DATABASE=perpustakaan
+      - DB_USERNAME=perpustakaan_user
+      - DB_PASSWORD=perpustakaan_pass
+
+  nginx:
+    image: nginx:alpine
+    container_name: perpustakaan_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - perpustakaan
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8.0
+    container_name: perpustakaan_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: perpustakaan
+      MYSQL_USER: perpustakaan_user
+      MYSQL_PASSWORD: perpustakaan_pass
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - perpustakaan
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  perpustakaan:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local

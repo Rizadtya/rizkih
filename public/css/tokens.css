@@ -1,0 +1,363 @@
+/* =============================================================================
+   PERPUSTAKAAN SEKOLAH DIGITAL - DESIGN TOKENS
+   Design System: Newsprint (Editorial)
+   Generated: 2026-08-12
+
+   Hallmark · Theme: Newsprint
+   Genre: Editorial · Tone: Trustworthy, Intelligent, Professional
+   Context: School Library Management System
+   ============================================================================= */
+
+/* =============================================================================
+   TYPOGRAPHY
+   ============================================================================= */
+
+:root {
+  /* Font Families */
+  --font-display: 'Instrument Serif', 'Georgia', 'Times New Roman', serif;
+  --font-body: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Type Scale (4pt base) */
+  --text-xs: 0.75rem;      /* 12px - metadata, captions */
+  --text-sm: 0.875rem;     /* 14px - secondary text, labels */
+  --text-base: 1rem;       /* 16px - body text, forms */
+  --text-lg: 1.125rem;     /* 18px - emphasized body */
+  --text-xl: 1.25rem;      /* 20px - small headings */
+  --text-2xl: 1.5rem;      /* 24px - section headings */
+  --text-3xl: 1.875rem;    /* 30px - page titles */
+  --text-4xl: 2.25rem;     /* 36px - dashboard headers */
+  --text-display: 3rem;    /* 48px - hero/welcome */
+
+  /* Line Heights */
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose: 1.75;
+
+  /* Letter Spacing */
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-widest: 0.1em;
+
+  /* Measure (optimal line length) */
+  --measure-narrow: 45ch;
+  --measure-base: 65ch;
+  --measure-wide: 80ch;
+}
+
+/* =============================================================================
+   COLORS - LIGHT MODE (Default)
+   ============================================================================= */
+
+:root {
+  /* Paper (Backgrounds) */
+  --color-paper: oklch(98% 0 0);           /* off-white, soft */
+  --color-paper-2: oklch(96% 0 0);         /* subtle surface lift */
+  --color-paper-3: oklch(94% 0 0);         /* hover/focus states */
+  --color-paper-4: oklch(92% 0 0);         /* borders, dividers */
+
+  /* Ink (Text) */
+  --color-ink: oklch(25% 0 0);             /* primary text */
+  --color-ink-2: oklch(45% 0 0);           /* secondary text */
+  --color-ink-3: oklch(60% 0 0);           /* muted text, placeholders */
+
+  /* Accent - Library Sienna (warm, bookish) */
+  --color-accent: oklch(52% 0.12 35);      /* burnt sienna */
+  --color-accent-hover: oklch(48% 0.14 35);
+  --color-accent-subtle: oklch(94% 0.02 35); /* tinted backgrounds */
+
+  /* Status Colors */
+  --color-success: oklch(58% 0.15 145);    /* forest green */
+  --color-success-subtle: oklch(94% 0.02 145);
+  --color-warning: oklch(68% 0.16 75);     /* amber */
+  --color-warning-subtle: oklch(94% 0.02 75);
+  --color-danger: oklch(55% 0.18 25);      /* brick red */
+  --color-danger-subtle: oklch(94% 0.02 25);
+  --color-info: oklch(60% 0.14 250);       /* muted blue */
+  --color-info-subtle: oklch(94% 0.02 250);
+
+  /* Borders & Dividers */
+  --color-border: oklch(88% 0 0);          /* light borders */
+  --color-border-emphasis: oklch(75% 0 0); /* stronger borders */
+  --color-border-subtle: oklch(94% 0 0);   /* very subtle */
+
+  /* Focus */
+  --color-focus: var(--color-accent);
+  --color-focus-ring: var(--color-accent-subtle);
+}
+
+/* =============================================================================
+   COLORS - DARK MODE
+   ============================================================================= */
+
+[data-theme="dark"] {
+  /* Paper (Backgrounds) */
+  --color-paper: oklch(18% 0 0);           /* deep charcoal */
+  --color-paper-2: oklch(22% 0 0);         /* elevated surface */
+  --color-paper-3: oklch(26% 0 0);         /* hover/focus states */
+  --color-paper-4: oklch(30% 0 0);         /* borders, dividers */
+
+  /* Ink (Text) */
+  --color-ink: oklch(92% 0 0);             /* primary text */
+  --color-ink-2: oklch(75% 0 0);           /* secondary text */
+  --color-ink-3: oklch(55% 0 0);           /* muted text */
+
+  /* Accent - slightly brighter in dark mode */
+  --color-accent: oklch(58% 0.13 35);
+  --color-accent-hover: oklch(62% 0.14 35);
+  --color-accent-subtle: oklch(24% 0.03 35);
+
+  /* Status Colors - adjusted for dark backgrounds */
+  --color-success: oklch(65% 0.16 145);
+  --color-success-subtle: oklch(24% 0.03 145);
+  --color-warning: oklch(72% 0.17 75);
+  --color-warning-subtle: oklch(24% 0.03 75);
+  --color-danger: oklch(62% 0.19 25);
+  --color-danger-subtle: oklch(24% 0.03 25);
+  --color-info: oklch(68% 0.15 250);
+  --color-info-subtle: oklch(24% 0.03 250);
+
+  /* Borders */
+  --color-border: oklch(32% 0 0);
+  --color-border-emphasis: oklch(45% 0 0);
+  --color-border-subtle: oklch(24% 0 0);
+}
+
+/* =============================================================================
+   SPACING SCALE (4pt base)
+   ============================================================================= */
+
+:root {
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+
+  /* Semantic Spacing */
+  --space-page-x: var(--space-6);        /* page horizontal padding */
+  --space-page-y: var(--space-8);        /* page vertical padding */
+  --space-section: var(--space-12);      /* between sections */
+  --space-card-inner: var(--space-6);    /* card padding */
+  --space-stack-tight: var(--space-2);   /* label to input */
+  --space-stack-normal: var(--space-4);  /* between form fields */
+  --space-stack-loose: var(--space-6);   /* between sections */
+}
+
+/* =============================================================================
+   SIZING
+   ============================================================================= */
+
+:root {
+  /* Container Max Widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+
+  /* Sidebar */
+  --sidebar-width: 240px;
+
+  /* Common Sizes */
+  --size-button-sm: var(--space-8);
+  --size-button-md: var(--space-10);
+  --size-button-lg: var(--space-12);
+  --size-icon-sm: 1rem;
+  --size-icon-md: 1.25rem;
+  --size-icon-lg: 1.5rem;
+}
+
+/* =============================================================================
+   BORDER RADII (Restrained, not excessive)
+   ============================================================================= */
+
+:root {
+  --radius-none: 0;
+  --radius-sm: 2px;      /* very subtle - buttons, inputs */
+  --radius-md: 4px;      /* cards, modals */
+  --radius-lg: 6px;      /* larger containers */
+  --radius-full: 9999px; /* pills/badges only */
+}
+
+/* =============================================================================
+   SHADOWS (Subtle, not excessive)
+   ============================================================================= */
+
+:root {
+  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.05);
+  --shadow-md: 0 2px 4px oklch(0% 0 0 / 0.08);
+  --shadow-lg: 0 4px 8px oklch(0% 0 0 / 0.12);
+  --shadow-focus: 0 0 0 3px var(--color-focus-ring);
+}
+
+[data-theme="dark"] {
+  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.3);
+  --shadow-md: 0 2px 4px oklch(0% 0 0 / 0.4);
+  --shadow-lg: 0 4px 8px oklch(0% 0 0 / 0.5);
+}
+
+/* =============================================================================
+   TRANSITIONS & DURATIONS (Motion-cut philosophy)
+   ============================================================================= */
+
+:root {
+  /* Durations */
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+
+  /* Easings */
+  --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-in: cubic-bezier(0.32, 0, 0.67, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Common Transitions */
+  --transition-colors: color var(--duration-fast) var(--ease-out),
+                       background-color var(--duration-fast) var(--ease-out),
+                       border-color var(--duration-fast) var(--ease-out);
+  --transition-transform: transform var(--duration-fast) var(--ease-out);
+  --transition-opacity: opacity var(--duration-base) var(--ease-out);
+  --transition-shadow: box-shadow var(--duration-base) var(--ease-out);
+  --transition-all: all var(--duration-fast) var(--ease-out);
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================================================
+   Z-INDEX SCALE (Logical layering)
+   ============================================================================= */
+
+:root {
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-fixed: 30;
+  --z-modal-backdrop: 40;
+  --z-modal: 50;
+  --z-popover: 60;
+  --z-toast: 70;
+}
+
+/* =============================================================================
+   BREAKPOINTS (Mobile-first)
+   ============================================================================= */
+
+:root {
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+}
+
+/* =============================================================================
+   FOCUS STATES (WCAG AA compliant)
+   ============================================================================= */
+
+:root {
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-color: var(--color-focus);
+}
+
+/* =============================================================================
+   BASE RESETS & DEFAULTS
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  transition: background-color var(--duration-base) var(--ease-out),
+              color var(--duration-base) var(--ease-out);
+}
+
+/* =============================================================================
+   UTILITY CLASSES
+   ============================================================================= */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container-xl);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-page-x);
+  padding-right: var(--space-page-x);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.stack-tight > * + * {
+  margin-top: var(--space-stack-tight);
+}
+
+.stack-normal > * + * {
+  margin-top: var(--space-stack-normal);
+}
+
+.stack-loose > * + * {
+  margin-top: var(--space-stack-loose);
+}

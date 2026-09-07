@@ -1,0 +1,42 @@
+flowchart TD
+    A[Start: User login ke sistem] --> B{Cek Role}
+    B -->|Admin| C[Admin memilih menu Transaksi]
+    B -->|User| D[User membuka Peminjaman Saya]
+
+    C --> E[Admin melihat list transaksi aktif]
+    D --> F[User melihat peminjaman aktif sendiri]
+
+    E --> G[Pilih transaksi yang akan dikembalikan]
+    F --> H[Klik tombol Kembalikan]
+
+    G --> I{Validasi Status}
+    H --> I
+
+    I -->|Status != dipinjam| J[Error: Buku sudah dikembalikan]
+    J --> End1[End: Pengembalian ditolak]
+
+    I -->|Status = dipinjam| K[Mulai Database Transaction]
+    K --> L[Set tanggal_kembali = hari ini]
+    L --> M{Bandingkan tanggal_kembali dengan tanggal_jatuh_tempo}
+
+    M -->|Kembali tepat waktu| N[Set status = dikembalikan]
+    N --> O[Set denda = 0]
+
+    M -->|Kembali terlambat| P[Hitung hari keterlambatan]
+    P --> Q[Hitung denda: hari * Rp 1000]
+    Q --> R[Set status = terlambat]
+    R --> S[Set denda sesuai perhitungan]
+
+    O --> T[Update record Transaction]
+    S --> T
+    T --> U[Tambah jumlah_tersedia buku]
+    U --> V[Commit Database Transaction]
+    V --> W{Ada Denda?}
+    W -->|Ya| X[Tampilkan info: Buku dikembalikan dengan denda Rp X]
+    W -->|Tidak| Y[Tampilkan info: Buku berhasil dikembalikan]
+    X --> Z[End: Pengembalian berhasil]
+    Y --> Z
+
+    K -->|Error| AA[Rollback Transaction]
+    AA --> AB[Tampilkan Error Message]
+    AB --> End1
