@@ -1,10 +1,12 @@
+
 FROM php:8.4-fpm
 
-# Set working directory
 WORKDIR /var/www
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install dependencies and Nginx
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nginx \
+    gettext-base \
     git \
     curl \
     libpng-dev \
@@ -13,29 +15,38 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libzip-dev \
-    netcat-openbsd
+    netcat-openbsd \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# PHP extensions
+RUN docker-php-ext-install \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    zip
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
-
-# Get latest Composer
+# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy application files
+# Application
 COPY . /var/www
 
-# Copy entrypoint script
+# Nginx configuration template
+COPY docker/nginx/default.conf /etc/nginx/default.conf.template
+
+# Entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Set permissions
+# Remove default Nginx site
+RUN rm -f /etc/nginx/sites-enabled/default
+
+# Permissions
 RUN chown -R www-data:www-data /var/www
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["php-fpm"]
+

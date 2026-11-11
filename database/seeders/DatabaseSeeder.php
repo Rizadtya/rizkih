@@ -13,23 +13,27 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create Admin User
-        $admin = User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
+        // Create or Update Admin User
+        $admin = User::updateOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Administrator',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
 
-        // Create Regular User
-        $user = User::create([
-            'name' => 'User Demo',
-            'email' => 'user@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'user',
-        ]);
+        // Create or Update Regular User
+        $user = User::updateOrCreate(
+            ['email' => 'user@example.com'],
+            [
+                'name' => 'User Demo',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+            ]
+        );
 
-        // Create Books
+        // Create Books (gunakan updateOrCreate berdasarkan kode_buku)
         $books = [
             [
                 'kode_buku' => 'BK-001',
@@ -130,7 +134,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($books as $book) {
-            Book::create($book);
+            Book::updateOrCreate(['kode_buku' => $book['kode_buku']], $book);
         }
 
         // Create Members
@@ -183,49 +187,40 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($members as $member) {
-            Member::create($member);
+            Member::updateOrCreate(['kode_anggota' => $member['kode_anggota']], $member);
         }
 
-        // Create sample transactions
+        // Create sample transactions only if they don't exist yet
         $book1 = Book::where('kode_buku', 'BK-001')->first();
         $book2 = Book::where('kode_buku', 'BK-008')->first();
         $member1 = Member::where('kode_anggota', 'A-001')->first();
         $member2 = Member::where('kode_anggota', 'A-002')->first();
 
-        // Active transaction
-        Transaction::create([
-            'kode_transaksi' => 'TRX-' . now()->format('Ymd') . '-001',
-            'book_id' => $book1->id,
-            'member_id' => $member1->id,
-            'user_id' => $user->id,
-            'tanggal_pinjam' => now()->subDays(3),
-            'tanggal_jatuh_tempo' => now()->addDays(4),
-            'status' => 'dipinjam',
-        ]);
+        // Active transaction 1
+        Transaction::firstOrCreate(
+            ['kode_transaksi' => 'TRX-' . now()->format('Ymd') . '-001'],
+            [
+                'book_id' => $book1->id,
+                'member_id' => $member1->id,
+                'user_id' => $user->id,
+                'tanggal_pinjam' => now()->subDays(3),
+                'tanggal_jatuh_tempo' => now()->addDays(4),
+                'status' => 'dipinjam',
+            ]
+        );
 
-        // Another active transaction
-        Transaction::create([
-            'kode_transaksi' => 'TRX-' . now()->format('Ymd') . '-002',
-            'book_id' => $book2->id,
-            'member_id' => $member2->id,
-            'user_id' => $user->id,
-            'tanggal_pinjam' => now()->subDays(5),
-            'tanggal_jatuh_tempo' => now()->addDays(2),
-            'status' => 'dipinjam',
-        ]);
-
-        // Completed transaction
-        Transaction::create([
-            'kode_transaksi' => 'TRX-' . now()->subDays(10)->format('Ymd') . '-001',
-            'book_id' => $book1->id,
-            'member_id' => $member1->id,
-            'user_id' => $admin->id,
-            'tanggal_pinjam' => now()->subDays(15),
-            'tanggal_jatuh_tempo' => now()->subDays(8),
-            'tanggal_kembali' => now()->subDays(10),
-            'status' => 'dikembalikan',
-            'denda' => 0,
-        ]);
+        // Active transaction 2
+        Transaction::firstOrCreate(
+            ['kode_transaksi' => 'TRX-' . now()->format('Ymd') . '-002'],
+            [
+                'book_id' => $book2->id,
+                'member_id' => $member2->id,
+                'user_id' => $user->id,
+                'tanggal_pinjam' => now()->subDays(5),
+                'tanggal_jatuh_tempo' => now()->addDays(2),
+                'status' => 'dipinjam',
+            ]
+        );
 
         $this->command->info('Database seeded successfully!');
         $this->command->info('Admin: admin@example.com / password');

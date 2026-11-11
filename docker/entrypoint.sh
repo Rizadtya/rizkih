@@ -1,41 +1,52 @@
+
 #!/bin/bash
+set -e
 
-# Wait for MySQL to be ready
-echo "Waiting for MySQL to be ready..."
-until nc -z -v -w30 mysql 3306
-do
-  echo "Waiting for database connection..."
-  sleep 2
-done
-
-echo "MySQL is ready!"
-
-# Go to working directory
 cd /var/www
 
-# Install composer dependencies if vendor doesn't exist
-if [ ! -d "/var/www/vendor" ]; then
-    echo "Installing composer dependencies..."
-    composer install --no-interaction --optimize-autoloader
+echo "Starting Laravel application..."
+
+# Wait for database
+if [ -n "$DB_HOST" ]; then
+    echo "Waiting for database: $DB_HOST"
+
+    until nc -z -w5 "$DB_HOST" "${DB_PORT:-3306}"; do
+        echo "Waiting for database connection..."
+        sleep 2
+    done
+
+    echo "Database is ready!"
 fi
 
-# Generate key if .env exists but APP_KEY is empty
-if [ -f "/var/www/.env" ]; then
-    if ! grep -q "APP_KEY=base64:" /var/www/.env; then
-        echo "Generating application key..."
-        php artisan key:generate --force
-    fi
+# Install dependencies if vendor is missing
+if [ ! -d "/var/www/vendor" ]; then
+    composer install --no-interaction --prefer-dist --optimize-autoloader
+fi
+
+# Check application key
+if [ -z "$APP_KEY" ]; then
+    echo "ERROR: APP_KEY is missing!"
+    exit 1
 fi
 
 # Set permissions
-chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
 
 # Run migrations
 echo "Running migrations..."
 php artisan migrate --force
 
-# Run seeders
-echo "Running seeders..."
-php artisan db:seed --force
+# Configure Nginx
+export PORT="${PORT:-8080}"
 
-exec "$@"
+envsubst '${PORT}' < /etc/nginx/default.conf.template \
+    > /etc/nginx/conf.d/default.conf
+
+# Start PHP-FPM
+echo "Starting PHP-FPM..."
+php-fpm -D
+
+# Start Nginx
+echo "Starting Nginx on port $PORT..."
+exec nginx -g "daemon off;"
+
