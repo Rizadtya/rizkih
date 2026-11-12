@@ -1,12 +1,8 @@
-
 FROM php:8.4-fpm
 
 WORKDIR /var/www
 
-# Install dependencies and Nginx
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    nginx \
-    gettext-base \
+RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
@@ -16,37 +12,26 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     libzip-dev \
     netcat-openbsd \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    nginx
 
-# PHP extensions
-RUN docker-php-ext-install \
-    pdo_mysql \
-    mbstring \
-    exif \
-    pcntl \
-    bcmath \
-    gd \
-    zip
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Composer
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Application
 COPY . /var/www
 
-# Nginx configuration template
-COPY docker/nginx/default.conf /etc/nginx/default.conf.template
+# Config nginx untuk Railway (dipakai hanya jika variable PORT diisi)
+RUN rm -f /etc/nginx/sites-enabled/default
+COPY docker/nginx/railway.conf /etc/nginx/conf.d/default.conf
 
-# Entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Remove default Nginx site
-RUN rm -f /etc/nginx/sites-enabled/default
-
-# Permissions
 RUN chown -R www-data:www-data /var/www
 
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+EXPOSE 9000
 
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["php-fpm"]

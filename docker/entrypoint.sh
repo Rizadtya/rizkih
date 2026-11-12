@@ -1,52 +1,48 @@
-
 #!/bin/bash
-set -e
+
+DB_HOST_WAIT="${DB_HOST:-mysql}"
+DB_PORT_WAIT="${DB_PORT:-3306}"
+
+echo "Waiting for MySQL at ${DB_HOST_WAIT}:${DB_PORT_WAIT}..."
+until nc -z -v -w30 "$DB_HOST_WAIT" "$DB_PORT_WAIT"
+do
+  echo "Waiting for database connection..."
+  sleep 2
+done
+
+echo "MySQL is ready!"
 
 cd /var/www
 
-echo "Starting Laravel application..."
-
-# Wait for database
-if [ -n "$DB_HOST" ]; then
-    echo "Waiting for database: $DB_HOST"
-
-    until nc -z -w5 "$DB_HOST" "${DB_PORT:-3306}"; do
-        echo "Waiting for database connection..."
-        sleep 2
-    done
-
-    echo "Database is ready!"
-fi
-
-# Install dependencies if vendor is missing
 if [ ! -d "/var/www/vendor" ]; then
-    composer install --no-interaction --prefer-dist --optimize-autoloader
+    echo "Installing composer dependencies..."
+    composer install --no-interaction --optimize-autoloader
 fi
 
-# Check application key
-if [ -z "$APP_KEY" ]; then
-    echo "ERROR: APP_KEY is missing!"
-    exit 1
+if [ -f "/var/www/.env" ]; then
+    if ! grep -q "APP_KEY=base64:" /var/www/.env; then
+        echo "Generating application key..."
+        php artisan key:generate --force
+    fi
 fi
 
-# Set permissions
-chown -R www-data:www-data storage bootstrap/cache
+chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Run migrations
 echo "Running migrations..."
 php artisan migrate --force
 
-# Configure Nginx
-export PORT="${PORT:-8080}"
+# Seeder hanya jalan jika RUN_SEEDER=true (di lokal compose, set manual bila perlu)
+if [ "$RUN_SEEDER" = "true" ]; then
+    echo "Running seeders..."
+    php artisan db:seed --force
+fi
 
-envsubst '${PORT}' < /etc/nginx/default.conf.template \
-    > /etc/nginx/conf.d/default.conf
+# Mode Railway: jika PORT diisi, jalankan php-fpm + nginx dalam satu container
+if [ -n "$PORT" ]; then
+    echo "Starting nginx on port $PORT..."
+    sed -i "s/PORT_PLACEHOLDER/${PORT}/" /etc/nginx/conf.d/default.conf
+    php-fpm -D
+    exec nginx -g 'daemon off;'
+fi
 
-# Start PHP-FPM
-echo "Starting PHP-FPM..."
-php-fpm -D
-
-# Start Nginx
-echo "Starting Nginx on port $PORT..."
-exec nginx -g "daemon off;"
-
+exec "$@"
